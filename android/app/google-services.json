@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "502473769415",
+    "project_id": "expenses-75a62",
+    "storage_bucket": "expenses-75a62.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502473769415:android:bb10c4f6f8c63d055e19e2",
+        "android_client_info": {
+          "package_name": "de.happychip.expenses"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502473769415-cr01789u1sdcr5i44257r6lbi7u1tm26.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5Bn6SHxtv8LXESpOYZagJFwGSWW-vPXw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502473769415-cr01789u1sdcr5i44257r6lbi7u1tm26.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
