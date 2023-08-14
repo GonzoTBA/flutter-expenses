@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:logger/logger.dart';
+import 'bottom_navigation_layout.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:expenses/expense_model.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({Key? key}) : super(key: key);
@@ -11,30 +13,44 @@ class AddExpenseScreen extends StatefulWidget {
 class AddExpenseScreenState extends State<AddExpenseScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final logger = Logger();
+  final DatabaseReference _database = FirebaseDatabase.instance.ref();
 
-  void _submitExpense() {
-    if (_amountController.text.isNotEmpty) {
-      final double? amount = double.tryParse(_amountController.text);
-      final String description = _descriptionController.text;
+  Future<void> _submitExpense(int amount, String description) async {
+    if (amount > 0) {
+      final expense = Expense(amount, description, DateTime.now());
 
-      if (amount != null && amount > 0) {
-        // Log the amount and description
-        logger.i('Amount: $amount, Description: $description');
+      final newExpenseRef = _database.child('expenses').push();
+      await newExpenseRef.set(expense.toJson());
 
-        // Clear the text fields
-        _amountController.clear();
-        _descriptionController.clear();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please enter a valid amount.')),
-        );
-      }
+      ScaffoldMessenger.of(_scaffoldContext!).showSnackBar(
+        const SnackBar(content: Text('Expense saved successfully!')),
+      );
+
+      _amountController.clear();
+      _descriptionController.clear();
+    } else {
+      ScaffoldMessenger.of(_scaffoldContext!).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid amount.')),
+      );
     }
   }
 
+  BuildContext? _scaffoldContext; // Variable para capturar el contexto del Scaffold
+
   @override
   Widget build(BuildContext context) {
+    return BottomNavigationLayout(
+      currentIndex: 0,
+      screens: [
+        _buildAddExpenseContent(context),
+        // Otros widgets de las pantallas (ExpenseListScreen, BalanceScreen)
+      ],
+    );
+  }
+
+  Widget _buildAddExpenseContent(BuildContext context) {
+    _scaffoldContext = context; // Captura el contexto del Scaffold
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Expense'),
@@ -58,10 +74,15 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
                 labelText: 'Description',
                 hintText: 'Enter a description (optional).',
               ),
+              textInputAction: TextInputAction.done,
             ),
-            const SizedBox(height: 32.0),
+            const SizedBox(height: 16.0),
             ElevatedButton(
-              onPressed: _submitExpense,
+              onPressed: () {
+                final int amount = int.tryParse(_amountController.text) ?? 0;
+                final String description = _descriptionController.text;
+                _submitExpense(amount, description);
+              },
               child: const Text('Submit Expense'),
             ),
           ],

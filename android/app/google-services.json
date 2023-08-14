@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "502473769415",
+    "firebase_url": "https://expenses-75a62-default-rtdb.europe-west1.firebasedatabase.app/",
     "project_id": "expenses-75a62",
     "storage_bucket": "expenses-75a62.appspot.com"
   },
