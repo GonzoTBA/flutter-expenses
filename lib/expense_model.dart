@@ -3,7 +3,11 @@ class Expense {
   final String description;
   final DateTime timestamp;
 
-  Expense(this.amount, this.description, this.timestamp);
+  // Class constructor
+  Expense({
+    this.amount = 0, 
+    this.description = '', 
+    DateTime? timestamp }) : timestamp = timestamp ?? DateTime.now(); 
 
   Map<String, dynamic> toJson() {
     return {
@@ -15,9 +19,9 @@ class Expense {
 
   factory Expense.fromJson(Map<String, dynamic> json) {
     return Expense(
-      json['amount'],
-      json['description'],
-      DateTime.parse(json['timestamp']),
+      amount: json['amount'] as int,
+      description: json['description'] as String,
+      timestamp: DateTime.parse(json['timestamp'] as String),
     );
   }
 }

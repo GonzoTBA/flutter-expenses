@@ -1,23 +1,33 @@
 import 'package:flutter/material.dart';
+import 'package:expenses/screens/add_expense_screen.dart';
+import 'package:expenses/screens/expense_list_screen.dart';
 
-class BottomNavigationLayout extends StatelessWidget {
-  final int currentIndex;
-  final List<Widget> screens;
-
+class BottomNavigationLayout extends StatefulWidget {
   const BottomNavigationLayout({
     Key? key,
-    required this.currentIndex,
-    required this.screens,
   }) : super(key: key);
 
   @override
+  BottomNavigationLayoutState createState() => BottomNavigationLayoutState();
+}
+
+class BottomNavigationLayoutState extends State<BottomNavigationLayout> {
+  int _currentIndex = 0; // Inicialmente, muestra la primera pantalla
+
+  final List<Widget> _screens = [
+    const AddExpenseScreen(), // Cambia por tus pantallas reales
+    const ExpenseListScreen(), // Cambia por tus pantallas reales
+    // CheckBalanceScreen(), // Cambia por tus pantallas reales
+  ];
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: screens[currentIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: currentIndex,
+    return BottomNavigationBar(
+        currentIndex: _currentIndex,
         onTap: (index) {
-          // Navegación a la pantalla seleccionada
+          setState(() {
+            _currentIndex = index; // Actualiza el índice actual al hacer tap en un ítem
+          });
         },
         items: const [
           BottomNavigationBarItem(
@@ -33,7 +43,6 @@ class BottomNavigationLayout extends StatelessWidget {
             label: 'Check balance',
           ),
         ],
-      ),
-    );
+      );
   }
 }

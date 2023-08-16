@@ -17,7 +17,10 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
 
   Future<void> _submitExpense(int amount, String description) async {
     if (amount > 0) {
-      final expense = Expense(amount, description, DateTime.now());
+      final expense = Expense(
+        amount: amount, 
+        description: description, 
+        timestamp: DateTime.now());
 
       final newExpenseRef = _database.child('expenses').push();
       await newExpenseRef.set(expense.toJson());
@@ -39,18 +42,6 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return BottomNavigationLayout(
-      currentIndex: 0,
-      screens: [
-        _buildAddExpenseContent(context),
-        // Otros widgets de las pantallas (ExpenseListScreen, BalanceScreen)
-      ],
-    );
-  }
-
-  Widget _buildAddExpenseContent(BuildContext context) {
-    _scaffoldContext = context; // Captura el contexto del Scaffold
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Add Expense'),
@@ -88,6 +79,7 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
           ],
         ),
       ),
+      bottomNavigationBar: const BottomNavigationLayout(),
     );
   }
 }
