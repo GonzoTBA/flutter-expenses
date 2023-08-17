@@ -79,7 +79,6 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavigationLayout(),
     );
   }
 }

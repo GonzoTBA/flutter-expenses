@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'add_expense_screen.dart';
-//import 'expenses_list_screen.dart'; // Asegúrate de importar la pantalla ExpensesListScreen
-//import 'balance_screen.dart'; // Asegúrate de importar la pantalla BalanceScreen
+import 'package:expenses/screens/add_expense_screen.dart';
+import 'package:expenses/screens/expense_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -23,48 +22,7 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Expenses App'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text(
-              'Welcome to the Expenses App!',
-              style: TextStyle(fontSize: 18),
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AddExpenseScreen()),
-                );
-              },
-              child: const Text('Add Expense'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _currentIndex = 1; // Cambia a la pantalla de lista de gastos
-                });
-                _pageController.jumpToPage(1);
-              },
-              child: const Text('View Expenses List'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  _currentIndex = 2; // Cambia a la pantalla de balance
-                });
-                _pageController.jumpToPage(2);
-              },
-              child: const Text('View Balance'),
-            ),
-          ],
-        ),
-      ),
+      body: _setBody(),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -88,6 +46,28 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _setBody() {
+    return PageView.builder(
+      controller: _pageController,
+      onPageChanged: (index) {
+        setState(() {
+          _currentIndex = index;
+        });
+      },
+      itemCount: 3, // Number of pages/screens
+      itemBuilder: (context, index) {
+        if (index == 0) {
+          return const AddExpenseScreen();
+        } else if (index == 1) {
+          return const ExpenseListScreen();
+        } else {
+          // Handle other screens if needed
+          return Container();
+        }
+      },
     );
   }
 }

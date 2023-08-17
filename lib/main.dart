@@ -1,7 +1,9 @@
+import 'package:expenses/screens/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:expenses/services/auth_service.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:expenses/screens/add_expense_screen.dart';
+
+// Authenticates and navigates to home screen
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -65,7 +67,7 @@ class LoginScreenState extends State<LoginScreen> {
   Future<void> _navigateToAddExpenseScreen() async {
     final navigator = Navigator.of(context);
     await navigator.pushReplacement(
-      MaterialPageRoute(builder: (_) => const AddExpenseScreen()),
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
     );
   }
 }
