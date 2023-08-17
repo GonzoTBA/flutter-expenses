@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:expenses/expense_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({Key? key}) : super(key: key);
@@ -36,14 +37,23 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
       if (userID != null) {
         final newExpenseRef = _database.child('expenses').child(userID).push();
         await newExpenseRef.set(expense.toJson());
-      }
 
-      ScaffoldMessenger.of(_scaffoldContext!).showSnackBar(
-        const SnackBar(content: Text('Expense saved successfully!')),
-      );
+        Fluttertoast.showToast(
+          msg: 'Expense saved successfully!',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.TOP,
+          timeInSecForIosWeb: 3,
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+          fontSize: 16.0,
+        );
+      }
 
       _amountController.clear();
       _descriptionController.clear();
+
+      _amountFocus.unfocus();
+
     } else {
       ScaffoldMessenger.of(_scaffoldContext!).showSnackBar(
         const SnackBar(content: Text('Please enter a valid amount.')),
@@ -90,6 +100,20 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
               },
               child: const Text('Submit Expense'),
             ),
+
+            ElevatedButton(
+              onPressed: () {
+                final localContext = context; // Captura el contexto actual antes de entrar en la función asíncrona
+                FirebaseAuth.instance.signOut().then((_) {
+                  Navigator.pushReplacementNamed(localContext, '/login'); // Redirige usando el contexto capturado
+                }).catchError((error) {
+                  // Manejo de errores si ocurre algún problema al cerrar sesión
+                });
+              },
+              child: const Text('Cerrar Sesión Temporal'),
+            ),
+
+
           ],
         ),
       ),

@@ -49,7 +49,7 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
       }).toList();
 
       setState(() {
-        _expenses.addAll(loadedExpenses);
+        _expenses.addAll(loadedExpenses.reversed);
       });
     }
   }

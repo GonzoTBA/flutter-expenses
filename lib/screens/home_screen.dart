@@ -1,3 +1,4 @@
+import 'package:expenses/screens/balance_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:expenses/screens/add_expense_screen.dart';
 import 'package:expenses/screens/expense_list_screen.dart';
@@ -63,8 +64,10 @@ class HomeScreenState extends State<HomeScreen> {
           return const AddExpenseScreen();
         } else if (index == 1) {
           return const ExpenseListScreen();
-        } else {
-          // Handle other screens if needed
+        } else if (index == 2) {
+          return const BalanceScreen();
+        }
+        else {
           return Container();
         }
       },
