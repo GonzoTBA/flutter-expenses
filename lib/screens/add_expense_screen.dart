@@ -13,7 +13,15 @@ class AddExpenseScreen extends StatefulWidget {
 class AddExpenseScreenState extends State<AddExpenseScreen> {
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
+  final FocusNode _amountFocus = FocusNode();
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
+
+  @override
+  void initState() {
+    super.initState();
+    // Establece el enfoque en el campo de amount al inicio
+    _amountFocus.requestFocus();
+  }
 
   Future<void> _submitExpense(int amount, String description) async {
     if (amount > 0) {
@@ -57,6 +65,7 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
           children: [
             TextField(
               controller: _amountController,
+              focusNode: _amountFocus,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
                 labelText: 'Amount (€)',
