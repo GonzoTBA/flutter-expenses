@@ -1,9 +1,8 @@
-import 'package:expenses/screens/home_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:expenses/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:expenses/screens/home_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-
-// Authenticates and navigates to home screen
+import 'package:logger/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,37 +33,80 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final AuthService _authService = AuthService();
-  bool _loggingIn = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _signInAndNavigate();
-  }
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _loggingIn = false;
+  final Logger _logger = Logger();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: _loggingIn
-            ? const CircularProgressIndicator()
-            : Container(), // No muestra nada cuando no está iniciando sesión
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+              ),
+              TextField(
+                controller: _passwordController,
+                decoration: const InputDecoration(labelText: 'Password'),
+                obscureText: true,
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _loggingIn ? null : _signInOrRegister,
+                child: Text(_loggingIn ? 'Logging in...' : 'Sign In/Register'),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
 
-  Future<void> _signInAndNavigate() async {
-    await _authService.signInAnonymously();
+  Future<void> _signInOrRegister() async {
     setState(() {
-      _loggingIn = false;
+      _loggingIn = true;
     });
 
-    // Delay the navigation slightly to avoid using context across async gaps
-    await _navigateToAddExpenseScreen();
+    try {
+      final email = _emailController.text;
+      final password = _passwordController.text;
+
+      UserCredential userCredential;
+
+      // Try to sign in
+      try {
+        userCredential = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      } catch (signInError) {
+        // If sign in fails, try to register a new account
+        userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+      }
+
+      _logger.i('User signed in: ${userCredential.user?.uid}');
+
+      // Navigate to home screen
+      await _navigateToHomeScreen();
+    } catch (e) {
+      _logger.e('Error signing in/creating account: $e');
+      setState(() {
+        _loggingIn = false;
+      });
+    }
   }
 
-  Future<void> _navigateToAddExpenseScreen() async {
+  Future<void> _navigateToHomeScreen() async {
     final navigator = Navigator.of(context);
     await navigator.pushReplacement(
       MaterialPageRoute(builder: (_) => const HomeScreen()),
