@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../expense_model.dart';
 
@@ -68,20 +69,26 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
       appBar: AppBar(
         title: const Text('Expense List'),
       ),
-      body: ListView.builder(
-        controller: _scrollController,
-        itemCount: _expenses.length + 1, // Add 1 for loading indicator
-        itemBuilder: (context, index) {
-          if (index < _expenses.length) {
-            final expense = _expenses[index];
-            return ListTile(
-              title: Text('Amount: ${expense.amount.toString()}'),
-              subtitle: Text('Description: ${expense.description}'),
+      body: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: DataTable(
+          headingRowHeight: 60,
+          columns: const [
+            DataColumn(label: Text('Description')),
+            DataColumn(label: Text('Amount')),
+            DataColumn(label: Text('Date')),
+          ],
+          rows: _expenses.map((expense) {
+            final formattedDate = DateFormat('dd.MM.yyyy').format(expense.timestamp);
+            return DataRow(
+              cells: [
+                DataCell(Text(expense.description)),
+                DataCell(Text(expense.amount.toString())),
+                DataCell(Text(formattedDate)),
+              ],
             );
-          } else {
-            return _isLoading ? const CircularProgressIndicator() : const SizedBox.shrink();
-          }
-        },
+          }).toList(),
+        ),
       ),
     );
   }
