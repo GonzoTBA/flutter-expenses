@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:expenses/expense_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class AddExpenseScreen extends StatefulWidget {
   const AddExpenseScreen({Key? key}) : super(key: key);
@@ -21,8 +22,13 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
         description: description, 
         timestamp: DateTime.now());
 
-      final newExpenseRef = _database.child('expenses').push();
-      await newExpenseRef.set(expense.toJson());
+      final user = FirebaseAuth.instance.currentUser;
+      final userID = user?.uid;
+
+      if (userID != null) {
+        final newExpenseRef = _database.child('expenses').child(userID).push();
+        await newExpenseRef.set(expense.toJson());
+      }
 
       ScaffoldMessenger.of(_scaffoldContext!).showSnackBar(
         const SnackBar(content: Text('Expense saved successfully!')),

@@ -1,18 +1,40 @@
 import 'package:flutter/material.dart';
-import 'package:expenses/services/auth_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:expenses/screens/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
+
   @override
   LoginScreenState createState() => LoginScreenState();
 }
 
 class LoginScreenState extends State<LoginScreen> {
-  final AuthService _authService = AuthService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  void _signInAndNavigate(BuildContext context) async {
-    await _authService.signInAnonymously();
+  @override
+  void initState() {
+    super.initState();
+    _checkCurrentUser();
+  }
+
+  Future<void> _checkCurrentUser() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      await _navigateToHomeScreen();
+    }
+  }
+
+  void _signInAndNavigate() async {
+    await _auth.signInAnonymously();
+    await _navigateToHomeScreen();
+  }
+
+  Future<void> _navigateToHomeScreen() async {
+    final navigator = Navigator.of(context);
+    await navigator.pushReplacement(
+      MaterialPageRoute(builder: (context) => const HomeScreen()),
+    );
   }
 
   @override
@@ -20,14 +42,7 @@ class LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: Center(
         child: ElevatedButton(
-          onPressed: () async {
-            _signInAndNavigate(context);
-            // Here, after authentication, you can navigate to the main screen
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()),
-            );
-          },
+          onPressed: _signInAndNavigate,
           child: const Text('Sign In'),
         ),
       ),
