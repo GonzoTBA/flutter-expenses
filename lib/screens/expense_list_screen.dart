@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:firebase_database/firebase_database.dart';
 import '../expense_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class ExpenseListScreen extends StatefulWidget {
   const ExpenseListScreen({Key? key}) : super(key: key);
@@ -24,7 +25,13 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Future<void> _loadInitialExpenses() async {
-    final dataSnapshot = await _database.child('expenses')
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      return; // Exit if user is not authenticated
+    }
+
+    final userID = user.uid;
+    final dataSnapshot = await _database.child('expenses').child(userID)
         .orderByChild('timestamp')
         .limitToLast(20)
         .once();
@@ -35,9 +42,9 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
       final List<Expense> loadedExpenses = dataMap.entries.map((entry) {
         final Map<dynamic, dynamic> expenseMap = entry.value;
         return Expense(
-          amount: expenseMap['amount'] as int, // Parse as int
+          amount: expenseMap['amount'] as int,
           description: expenseMap['description'] as String,
-          timestamp: DateTime.parse(expenseMap['timestamp'] as String), // Parse as DateTime
+          timestamp: DateTime.parse(expenseMap['timestamp'] as String),
         );
       }).toList();
 
@@ -48,7 +55,8 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Future<void> _loadMoreExpenses() async {
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
       if (!_isLoading) {
         setState(() {
           _isLoading = true;
@@ -79,7 +87,8 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
             DataColumn(label: Text('Date')),
           ],
           rows: _expenses.map((expense) {
-            final formattedDate = DateFormat('dd.MM.yyyy').format(expense.timestamp);
+            final formattedDate =
+                DateFormat('dd.MM.yyyy').format(expense.timestamp);
             return DataRow(
               cells: [
                 DataCell(Text(expense.description)),

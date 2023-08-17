@@ -5,9 +5,10 @@ class Expense {
 
   // Class constructor
   Expense({
-    this.amount = 0, 
-    this.description = '', 
-    DateTime? timestamp }) : timestamp = timestamp ?? DateTime.now(); 
+    required this.amount,
+    required this.description,
+    required this.timestamp,
+  });
 
   Map<String, dynamic> toJson() {
     return {
