@@ -48,8 +48,11 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
         );
       }).toList();
 
+            // Sort the loaded expenses by timestamp in descending order
+      loadedExpenses.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
       setState(() {
-        _expenses.addAll(loadedExpenses.reversed);
+        _expenses.addAll(loadedExpenses);
       });
     }
   }

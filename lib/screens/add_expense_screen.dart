@@ -25,6 +25,9 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
   }
 
   Future<void> _submitExpense(int amount, String description) async {
+    if (description == '') {
+      description = '---';
+    }
     if (amount > 0) {
       final expense = Expense(
         amount: amount, 
