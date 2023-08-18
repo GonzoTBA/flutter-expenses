@@ -1,16 +1,11 @@
 # expenses
 
-A new Flutter project.
+This Flutter project is an app to control expenses for couples.
 
-## Getting Started
+It uses a Firebase database to store data and control users. There are only two users.
 
-This project is a starting point for a Flutter application.
+The app has three screens:
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- Add a new expense
+- Show a list of expenses (inifinite loading)
+- Show balance between users
