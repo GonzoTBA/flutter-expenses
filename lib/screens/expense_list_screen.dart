@@ -80,26 +80,31 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
       appBar: AppBar(
         title: const Text('Expense List'),
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: DataTable(
-          headingRowHeight: 60,
-          columns: const [
-            DataColumn(label: Text('Description')),
-            DataColumn(label: Text('Amount')),
-            DataColumn(label: Text('Date')),
-          ],
-          rows: _expenses.map((expense) {
-            final formattedDate =
-                DateFormat('dd.MM.yyyy').format(expense.timestamp);
-            return DataRow(
-              cells: [
-                DataCell(Text(expense.description)),
-                DataCell(Text(expense.amount.toString())),
-                DataCell(Text(formattedDate)),
-              ],
-            );
-          }).toList(),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: DataTable(
+            clipBehavior: Clip.hardEdge,
+            headingRowHeight: 56.0,
+            columnSpacing: 35.0,
+            columns: const [
+              DataColumn(label: Text('Description')),
+              DataColumn(label: Text('Amount')),
+              DataColumn(label: Text('Date')),
+            ],
+            rows: _expenses.map((expense) {
+              final formattedDate =
+                  DateFormat('dd.MM.yyyy').format(expense.timestamp);
+              return DataRow(
+                cells: [
+                  DataCell(Text(expense.description)),
+                  DataCell(Text(expense.amount.toString())),
+                  DataCell(Text(formattedDate)),
+                ],
+              );
+            }).toList(),
+          ),
         ),
       ),
     );

@@ -9,3 +9,10 @@ The app has three screens:
 - Add a new expense
 - Show a list of expenses (inifinite loading)
 - Show balance between users
+
+
+## Todo
+
+- Remove close session temporary button
+- In expense list screen, correct too wide table.
+- Add app icon

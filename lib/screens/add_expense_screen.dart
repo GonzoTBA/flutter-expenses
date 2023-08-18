@@ -104,18 +104,18 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
               child: const Text('Submit Expense'),
             ),
 
-            ElevatedButton(
-              onPressed: () {
-                final localContext = context; // Captura el contexto actual antes de entrar en la función asíncrona
-                FirebaseAuth.instance.signOut().then((_) {
-                  Navigator.pushReplacementNamed(localContext, '/login'); // Redirige usando el contexto capturado
-                }).catchError((error) {
-                  // Manejo de errores si ocurre algún problema al cerrar sesión
-                });
-              },
-              child: const Text('Cerrar Sesión Temporal'),
-            ),
-
+            // Logout button for development purposes
+            // ElevatedButton(
+            //   onPressed: () {
+            //     final localContext = context; // Captura el contexto actual antes de entrar en la función asíncrona
+            //     FirebaseAuth.instance.signOut().then((_) {
+            //       Navigator.pushReplacementNamed(localContext, '/login'); // Redirige usando el contexto capturado
+            //     }).catchError((error) {
+            //       // Manejo de errores si ocurre algún problema al cerrar sesión
+            //     });
+            //   },
+            //   child: const Text('Cerrar Sesión Temporal'),
+            // ),
 
           ],
         ),
