@@ -14,8 +14,8 @@ class BalanceScreenState extends State<BalanceScreen> {
   List<String> userIDs = [];
   int currentUserTotal = 0;
   int otherUserTotal = 0;
-  String otherUserName = ''; // Nombre del otro usuario
-  int expenseDifference = 0; // Diferencia de gastos entre los usuarios
+  String otherUserName = ''; 
+  int expenseDifference = 0; 
   String currentUserName = '';
   int expenseDifferenceFinal = 0;
   String higherPayerName = '';
@@ -31,7 +31,6 @@ class BalanceScreenState extends State<BalanceScreen> {
         _prepareData();
       });
     });
-    print('User Ids: $userIDs');
   }
 
   void _prepareData() {
@@ -50,7 +49,6 @@ class BalanceScreenState extends State<BalanceScreen> {
   }
 
   Future<void> _calculateBalances() async {
-    print('Executing function _calculateBalances');
     if (userIDs.isNotEmpty) {
       final currentUser = FirebaseAuth.instance.currentUser;
 
@@ -67,7 +65,6 @@ class BalanceScreenState extends State<BalanceScreen> {
           currentUserName = 'Daniela';
           otherUserName = 'Javier';
         }
-        print('Current user name: $currentUserName');
         setState(() {
           this.currentUserTotal = currentUserTotal;
         });
@@ -87,15 +84,12 @@ class BalanceScreenState extends State<BalanceScreen> {
 
   Future<List<String>> _readUserIDs() async {
     final usersSnapshot = await _database.child('expenses').once();
-    print('Printing usersSnapshot: $usersSnapshot');
 
     if (usersSnapshot.snapshot.value != null) {
       final Map<dynamic, dynamic>? usersData = usersSnapshot.snapshot.value as Map<dynamic, dynamic>?;
-      print('Printing usersData: $usersData');
 
       if (usersData != null) {
         userIDs = usersData.keys.cast<String>().toList();
-        print('Printing userIDs: $userIDs');
 
         return userIDs;
       }
@@ -122,7 +116,6 @@ class BalanceScreenState extends State<BalanceScreen> {
 
   return totalExpenses;
 }
-
 
   @override
   Widget build(BuildContext context) {
@@ -153,4 +146,3 @@ class BalanceScreenState extends State<BalanceScreen> {
     );
   }
 }
-
