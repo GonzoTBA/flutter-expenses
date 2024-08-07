@@ -21,7 +21,9 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
   void initState() {
     super.initState();
     // Establece el enfoque en el campo de amount al inicio
-    _amountFocus.requestFocus();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _amountFocus.requestFocus();
+    });
   }
 
   Future<void> _submitExpense(int amount, String description) async {
