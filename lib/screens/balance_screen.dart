@@ -99,23 +99,23 @@ class BalanceScreenState extends State<BalanceScreen> {
   }
 
   Future<int> calculateTotalExpensesForUser(String userID) async {
-  final userExpensesSnapshot = await _database.child('expenses').child(userID).once();
+    final userExpensesSnapshot = await _database.child('expenses').child(userID).once();
 
-  int totalExpenses = 0;
+    int totalExpenses = 0;
 
-  if (userExpensesSnapshot.snapshot.value != null) {
-    final Map<dynamic, dynamic>? userExpensesData = userExpensesSnapshot.snapshot.value as Map<dynamic, dynamic>?;
-    
-    if (userExpensesData != null) {
-      userExpensesData.forEach((expenseID, expenseData) {
-        final amount = expenseData['amount'] as int;
-        totalExpenses += amount;
-      });
+    if (userExpensesSnapshot.snapshot.value != null) {
+      final Map<dynamic, dynamic>? userExpensesData = userExpensesSnapshot.snapshot.value as Map<dynamic, dynamic>?;
+      
+      if (userExpensesData != null) {
+        userExpensesData.forEach((expenseID, expenseData) {
+          final amount = expenseData['amount'] as int;
+          totalExpenses += amount;
+        });
+      }
     }
-  }
 
-  return totalExpenses;
-}
+    return totalExpenses;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,15 +130,54 @@ class BalanceScreenState extends State<BalanceScreen> {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('$currentUserName total expenses: $currentUserTotal €',
-                style: const TextStyle(fontSize: 20.0)),
-              Text('$otherUserName total: $otherUserTotal €',
-                style: const TextStyle(fontSize: 20.0)),
+              Card(
+                elevation: 4.0,
+                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0),
+                child: ListTile(
+                  title: Text(
+                    '$currentUserName total expenses',
+                    style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    '$currentUserTotal €',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                ),
+              ),
+              Card(
+                elevation: 4.0,
+                margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0),
+                child: ListTile(
+                  title: Text(
+                    '$otherUserName total expenses',
+                    style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Text(
+                    '$otherUserTotal €',
+                    style: const TextStyle(fontSize: 18.0),
+                  ),
+                ),
+              ),
               const SizedBox(height: 20.0),
-              const Divider(height: 5.0),
               const SizedBox(height: 20.0),
-              Text('$higherPayerName has a positive balance of $expenseDifferenceFinal €',
-                style: const TextStyle(fontSize: 25.0)),
+                Card(
+                  color: Colors.blueAccent,
+                  elevation: 4.0,
+                  margin: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 0),
+                  child: Padding( 
+                    padding: const EdgeInsets.all(10.0),
+                    child: ListTile(
+                      title: const Text(
+                        'Balance',
+                        style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold, color: Colors.white),
+                      ),
+                      subtitle: Text(
+                        '$higherPayerName has a positive balance of $expenseDifferenceFinal €',
+                        style: const TextStyle(fontSize: 20.0, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),
