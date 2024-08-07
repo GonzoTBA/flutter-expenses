@@ -31,17 +31,19 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
       description = '---';
     }
     if (amount > 0) {
-      final expense = Expense(
-        amount: amount, 
-        description: description, 
-        timestamp: DateTime.now());
-
       final user = FirebaseAuth.instance.currentUser;
       final userID = user?.uid;
 
       if (userID != null) {
         final newExpenseRef = _database.child('expenses').child(userID).push();
+        final expense = Expense(
+          id: newExpenseRef.key, 
+          amount: amount, 
+          description: description, 
+          timestamp: DateTime.now()
+        );
         await newExpenseRef.set(expense.toJson());
+
 
         Fluttertoast.showToast(
           msg: 'Expense saved successfully!',
@@ -80,7 +82,7 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
           children: [
             TextField(
               controller: _amountController,
-              focusNode: _amountFocus,
+              autofocus: true,
               keyboardType: const TextInputType.numberWithOptions(decimal: true),
               decoration: const InputDecoration(
                 labelText: 'Amount (€)',
