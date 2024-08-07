@@ -16,7 +16,7 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
   final ScrollController _scrollController = ScrollController();
   final DatabaseReference _database = FirebaseDatabase.instance.ref();
   final List<Expense> _expenses = [];
-  bool _isLoading = false;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -26,8 +26,14 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Future<void> _loadInitialExpenses() async {
+    setState(() {
+      _isLoading = true;
+    });
     final user = FirebaseAuth.instance.currentUser;
     if (user == null) {
+      setState(() {
+        _isLoading = false;
+      });
       return; // Exit if user is not authenticated
     }
 
@@ -57,6 +63,10 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
         _expenses.addAll(loadedExpenses);
       });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   Future<void> _loadMoreExpenses() async {
@@ -101,34 +111,32 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
   }
 
   Future<void> _showDeleteConfirmationDialog(BuildContext context, Expense expense) async {
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false, // El usuario debe hacer una elección
-    builder: (BuildContext dialogContext) {
-      return AlertDialog(
-        title: const Text('Confirm Delete'),
-        content: const Text('Are you sure you want to delete this expense?'),
-        actions: <Widget>[
-          TextButton(
-            child: const Text('Cancel'),
-            onPressed: () {
-              Navigator.of(dialogContext).pop(); // Cierra el diálogo
-            },
-          ),
-          TextButton(
-            child: const Text('Delete'),
-            onPressed: () {
-              Navigator.of(dialogContext).pop(); // Cierra el diálogo
-              _deleteExpense(expense); // Llama al método de eliminación
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
-
-
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // El usuario debe hacer una elección
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: const Text('Are you sure you want to delete this expense?'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Cierra el diálogo
+              },
+            ),
+            TextButton(
+              child: const Text('Delete'),
+              onPressed: () {
+                Navigator.of(dialogContext).pop(); // Cierra el diálogo
+                _deleteExpense(expense); // Llama al método de eliminación
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -142,39 +150,41 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: DataTable(
-            clipBehavior: Clip.hardEdge,
-            headingRowHeight: 56.0,
-            columnSpacing: 20.0,
-            columns: const [
-              DataColumn(label: Text('Description')),
-              DataColumn(label: Text('Amount')),
-              DataColumn(label: Text('Date')),
-              DataColumn(label: Text('Action')),
-            ],
-            rows: _expenses.map((expense) {
-              final formattedDate =
-                  DateFormat('dd.MM.yyyy').format(expense.timestamp);
-              return DataRow(
-                cells: [
-                  DataCell(Text(expense.description)),
-                  DataCell(Text(expense.amount.toString())),
-                  DataCell(Text(formattedDate)),
-                  DataCell(
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      onPressed: () {
-                        _showDeleteConfirmationDialog(context, expense);
-                      },
+        child: _isLoading
+          ? const Center(child: CircularProgressIndicator()) 
+          : SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: DataTable(
+              clipBehavior: Clip.hardEdge,
+              headingRowHeight: 56.0,
+              columnSpacing: 20.0,
+              columns: const [
+                DataColumn(label: Text('Description')),
+                DataColumn(label: Text('Amount')),
+                DataColumn(label: Text('Date')),
+                DataColumn(label: Text('Action')),
+              ],
+              rows: _expenses.map((expense) {
+                final formattedDate =
+                    DateFormat('dd.MM.yyyy').format(expense.timestamp);
+                return DataRow(
+                  cells: [
+                    DataCell(Text(expense.description)),
+                    DataCell(Text(expense.amount.toString())),
+                    DataCell(Text(formattedDate)),
+                    DataCell(
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () {
+                          _showDeleteConfirmationDialog(context, expense);
+                        },
+                      ),
                     ),
-                  ),
-                ],
-              );
-            }).toList(),
+                  ],
+                );
+              }).toList(),
+            ),
           ),
-        ),
       ),
     );
   }
