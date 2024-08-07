@@ -98,9 +98,6 @@ class AddExpenseScreenState extends State<AddExpenseScreen> {
     }
   }
 
-
-  BuildContext? _scaffoldContext; // Variable para capturar el contexto del Scaffold
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
