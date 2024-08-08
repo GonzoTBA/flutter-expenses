@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class BalanceScreen extends StatefulWidget {
   const BalanceScreen({Key? key}) : super(key: key);
@@ -19,6 +20,7 @@ class BalanceScreenState extends State<BalanceScreen> {
   String currentUserName = '';
   int expenseDifferenceFinal = 0;
   String higherPayerName = '';
+  DateTime? firstRecordDate;
 
   @override
   void initState() {
@@ -71,8 +73,11 @@ class BalanceScreenState extends State<BalanceScreen> {
 
         if (userIDs.length >= 2) {
           final otherUserID = userIDs.firstWhere((id) => id != currentUserId);
-
           final otherUserTotal = await calculateTotalExpensesForUser(otherUserID);
+
+          // Get date of first register entry
+          firstRecordDate = await _getFirstRecordDate();
+
           setState(() {
             this.otherUserTotal = otherUserTotal;
             expenseDifference = currentUserTotal - otherUserTotal;
@@ -81,6 +86,30 @@ class BalanceScreenState extends State<BalanceScreen> {
       }
     }
   }
+
+  Future<DateTime?> _getFirstRecordDate() async {
+    final userExpensesSnapshot = await _database.child('expenses').once();
+    if (userExpensesSnapshot.snapshot.value != null) {
+      final Map<dynamic, dynamic> userExpensesData = userExpensesSnapshot.snapshot.value as Map<dynamic, dynamic>;
+
+      DateTime? earliestDate;
+
+      userExpensesData.forEach((userId, expenses) {
+        final Map<dynamic, dynamic> expensesMap = expenses as Map<dynamic, dynamic>;
+
+        expensesMap.forEach((expenseId, expenseData) {
+          final timestamp = DateTime.parse(expenseData['timestamp'] as String);
+          if (earliestDate == null || timestamp.isBefore(earliestDate!)) {
+            earliestDate = timestamp;
+          }
+        });
+      });
+
+      return earliestDate;
+    }
+    return null;
+  }
+
 
   Future<List<String>> _readUserIDs() async {
     final usersSnapshot = await _database.child('expenses').once();
@@ -178,6 +207,21 @@ class BalanceScreenState extends State<BalanceScreen> {
                     ),
                   ),
                 ),
+                if (firstRecordDate != null)
+                  Row(
+                    children: [
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          'Records since: ${DateFormat('dd.MM.yyyy').format(firstRecordDate!)}',
+                          style: const TextStyle(
+                              fontSize: 16.0, 
+                              fontStyle: FontStyle.italic),
+                        ),
+                      ),
+                    ],
+                )
             ],
           ),
         ),
