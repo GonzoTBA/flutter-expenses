@@ -169,9 +169,25 @@ class ExpenseListScreenState extends State<ExpenseListScreen> {
                     DateFormat('dd.MM.yyyy').format(expense.timestamp);
                 return DataRow(
                   cells: [
-                    DataCell(Text(expense.description)),
-                    DataCell(Text(expense.amount.toString())),
-                    DataCell(Text(formattedDate)),
+                    DataCell(
+                      Text(
+                        expense.description,
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                    )),
+                    DataCell(
+                      Text(
+                        expense.amount.toString(),
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                    )),
+                    DataCell(
+                      Text(
+                        formattedDate,
+                        softWrap: true,
+                        overflow: TextOverflow.visible,
+                        )
+                    ),
                     DataCell(
                       IconButton(
                         icon: const Icon(Icons.delete),
